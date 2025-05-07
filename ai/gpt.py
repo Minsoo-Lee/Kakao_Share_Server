@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 # .env 파일에서 API 키 불러오기
 load_dotenv()
-# client = openai.OpenAI(api_key=os.getenv("GPT_KEY"))
+# client = openai.OpenAI(api_key=os.getenv("API_KEY"))
 
 # 여기서 주석 해제 후 api_key 넣을 것
 # client = openai.OpenAI(api_key="")
