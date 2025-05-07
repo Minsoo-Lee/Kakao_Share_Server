@@ -1,11 +1,6 @@
 from flask import Flask, render_template
 import threading, os
 from automation import crawling as cr
-import json
-import wx
-import urllib.parse  # URL 인코딩용
-
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Kakao_Share/
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')  # Kakao_Share/templates

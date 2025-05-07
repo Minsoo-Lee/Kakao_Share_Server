@@ -1,11 +1,8 @@
 from bs4 import BeautifulSoup as bs
-from ai import gemini
-import json, threading
+import threading
 from automation import driver
 import time
-import wx
 from ai import gpt
-import csv
 
 import requests
 

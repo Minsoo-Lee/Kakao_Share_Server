@@ -4,7 +4,7 @@ import threading
 from flask.cli import load_dotenv
 
 from automation import driver
-import wx, time
+import time
 
 from automation.driver import check_login_needed
 from automation import crawling
