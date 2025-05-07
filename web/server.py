@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 import threading, os
-from window import log  # log 모듈에서 가져옴
 from automation import crawling as cr
 import json
 import wx
@@ -20,7 +19,6 @@ def start_server():
     flask_thread.start()
 
 def run_flask():
-    log.append_log("서버를 시작합니다.")
     app.run(debug=True, port=9005, use_reloader=False)
 
 # @app.route('/')

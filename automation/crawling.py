@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup as bs
 from ai import gemini
 import json, threading
-from window import log
 from automation import driver
 import time
 import wx
@@ -26,8 +25,8 @@ index = 0
 
 news_list = {}
 
-def start_crawling(on_done_callback=None):
-    task_thread = threading.Thread(target=crawl_lists, args=(on_done_callback,))
+def start_crawling():
+    task_thread = threading.Thread(target=crawl_lists)
     task_thread.daemon = True  # 프로그램 종료 시 서버도 종료되도록 설정
     task_thread.start()
 
@@ -107,12 +106,9 @@ def crawl_lists():
     global BASE_URL, is_chrome_init
     news_list.clear()
     if is_chrome_init is False:
-        log.append_log("크롬을 초기화합니다.")
         driver.init_chrome()
-        log.append_log("크롬 초기화 완료")
         is_chrome_init = True
     driver.get_url(BASE_URL)
-    log.append_log("크롤링을 시작합니다.")
 
     time.sleep(2)
 
@@ -153,8 +149,6 @@ def crawl_lists():
 
         # title, body = gemini.get_title_body(body)
         title, body = gpt.get_title_body(body)
-        wx.CallAfter(log.append_log, body)
-        wx.CallAfter(log.append_log, title)
         news_list['title'] = title
         news_list['body'] = body
 
@@ -227,5 +221,6 @@ def get_paragraph(article_url):
                     article_text += text + "\n"  # 추출된 텍스트를 변수에 추가
 
         return article_text if len(article_text) > 0 else None  # 내용이 있으면 반환, 없으면 None 반환
+    return None
 
 
