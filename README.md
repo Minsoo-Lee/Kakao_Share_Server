@@ -62,6 +62,7 @@ git push -u origin master
 1. https://render.com 가입
 2. Dashboard → New > Web Service 
 3. GitHub 연동 → 위 프로젝트 선택 
+=> 현재 계정이 flagged되어 연동이 불가능...
 4. Build Command:
 ```pip install -r requirements.txt```
 5. Start Command:
