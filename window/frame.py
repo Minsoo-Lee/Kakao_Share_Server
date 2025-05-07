@@ -81,8 +81,6 @@ server_button.Enable(True)
 task_button: Button = wx.Button(button_panel, wx.ID_ANY, "작업 수행", size=wx.Size(170, 30))
 task_button.Bind(wx.EVT_BUTTON,
     lambda event: automator.start_task(
-        on_done_callback=set_buttons_after_task,
-        data=[id_input.Value, pw_input.Value, room_input.Value]
     )
 )
 task_button.Enable(False)

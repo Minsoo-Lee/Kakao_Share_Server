@@ -1,3 +1,4 @@
+import os
 import threading
 from automation import driver
 import wx, time
@@ -41,7 +42,7 @@ def set_task():
     # 로그인 화면이 뜨는지 확인
     if check_login_needed():
         log.append_log("로그인을 진행합니다.")
-        driver.execute_login("minsoo1101@naver.com", "msLee9164@@")
+        driver.execute_login(os.getenv("ID"), os.getenv("PW"))
         # driver.execute_login(data[0], data[1])
         log.append_log("카카오 인증을 진행해주세요.")
 
@@ -55,7 +56,7 @@ def set_task():
 
     # 로그인 후 버튼 비활성화
     driver.ready_chatroom()
-    if driver.is_chatroom_exist("테스트"):
+    if driver.is_chatroom_exist(os.getenv("ROOM")):
         log.append_log("채팅방을 탐색합니다.")
         driver.click_chatroom()
         driver.click_share()
