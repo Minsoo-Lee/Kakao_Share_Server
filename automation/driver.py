@@ -1,6 +1,7 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 driver = None
 URL = "https://localhost:"
@@ -11,14 +12,24 @@ inp_check = None
 def init_chrome():
     global driver, main_window
     if driver is None:
-        chrome_options = webdriver.ChromeOptions()
+        chrome_options = Options()
+
+        # ✅ 필수: Headless 서버 환경에서 필요한 옵션
+        chrome_options.add_argument('--headless')  # 화면 없이 실행
+        chrome_options.add_argument('--no-sandbox')  # 보안 샌드박스 비활성화
+        chrome_options.add_argument('--disable-dev-shm-usage')  # 메모리 사용 제한 해제
+        chrome_options.add_argument('--disable-gpu')  # GPU 비활성화 (가끔 필요)
+        chrome_options.add_argument('--window-size=1920x1080')  # 뷰포트 설정
+
+        # 선택 옵션
         chrome_options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.notifications": 1
         })
         chrome_options.add_experimental_option("detach", True)
-        chrome_options.add_argument('--start-maximized')
-        # chrome_options.add_argument("--incognito")  # 시크릿 모드 추가
+
+        # ChromeDriver 경로가 환경에 따라 다르다면 명시 필요
         driver = webdriver.Chrome(options=chrome_options)
+
         time.sleep(1)
 
     main_window = driver.current_window_handle
@@ -26,7 +37,7 @@ def init_chrome():
 
 def get_url(url):
     global driver
-    print("url = " + url)
+    # print("url = " + url)
     driver.get(url)
     time.sleep(1)
 
@@ -56,8 +67,10 @@ def activate_popup():
 def check_login_needed():
     try:
         driver.find_element(By.XPATH, "/html/body/div/div/div/main/article/div/div/form/div[1]/div/input")
+        print("Login needed")
         return True
     except:
+        print("Please Login")
         return False
 
 def execute_login(id, pw):
@@ -80,8 +93,9 @@ def check_login_done():
     try:
         driver.find_element(By.XPATH, "/html/body/div/div/div[2]/div[2]/div[2]/div")
         return True
-    except Exception as e:
-        print(e)
+    except:
+        print("로그인 인증이 아직 완료되지 않았습니다.")
+        time.sleep(2)
         return False
 
 def ready_chatroom():

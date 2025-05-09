@@ -1,21 +1,24 @@
 from flask import Flask, render_template
 import threading, os
 from automation import crawling as cr
+import flask
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Kakao_Share/
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')  # Kakao_Share/templates
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR)
 
-def start_server():
-    print("서버를 실행합니다...")
-    flask_thread = threading.Thread(target=run_flask)
-    flask_thread.daemon = True  # 프로그램 종료 시 서버도 종료되도록 설정
-    flask_thread.start()
+# def start_server():
+#     flask_thread = threading.Thread(target=run_flask)
+#     flask_thread.daemon = True  # 프로그램 종료 시 서버도 종료되도록 설정
+#     flask_thread.start()
 
 def run_flask():
-    app.run(debug=True, port=9005, use_reloader=False)
-
+    print("서버를 실행합니다...")
+    # app.run(debug=True, port=9005, use_reloader=False)
+    # app.run(debug=True, host='0.0.0.0', port=port, use_reloader=False)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
 # @app.route('/')
 # def share():
 #     summaries = cr.news_list
@@ -62,27 +65,58 @@ def run_flask():
 # def share():
 #     return render_template('feed.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa')
 
-@app.route('/')
-def share():
-    # raw_body = cr.news_list['title'] + "\n" + cr.news_list['body']
-    # body = raw_body.replace('"', '').replace("'", "")
-    # raw_body = "test"
+@app.route('/healthz')
+def health_check():
+    print("헬스 체크를 중...")
+    return "OK", 200
+
+@app.route('/run')
+def run():
+    if not cr.news_list or 'title' not in cr.news_list:
+        return "데이터 준비 중입니다", 200
 
     title = cr.news_list['title'].strip().replace('"', '').replace("'", "")
     body = cr.news_list['body'].strip().replace('"', '').replace("'", "")
-
-    # formatted_link = "https://localhost:9005/proxy?target=" + cr.news_list['link'].replace('https', 'http')
-    # formatted_link = cr.news_list['link'].replace('https', 'http')
     link = cr.news_list['link']
-    print("link = " + link)
-
-    # original_link = cr.news_list['link']
-
-    # 🔧 여기서 링크를 인코딩해서 프록시 주소로 변환
-    # encoded_link = urllib.parse.quote(original_link, safe='')
-    # link = f'https://proxy.liyao.space/{encoded_link}'
-    # print("encoded_link = ", encoded_link)
-    # print("link = ", link)
 
     return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
                            title=title, body=body, link=link)
+
+
+@app.route('/', methods=["GET", "HEAD"])
+def share():
+    print("method = " + flask.request.method)
+    if flask.request.method == "HEAD":
+        return "", 200  # 헬스 체크용 빈 응답
+
+    if flask.request.method == "GET":
+        return "", 200
+
+    return "this endpoint is not used directly", 200
+    #
+    # if not hasattr(cr, 'news_list') or not isinstance(cr.news_list, dict):
+    #     return "데이터가 아직 준비되지 않았습니다", 504  # Service Unavailable
+    #
+    # try:
+    #     title = cr.news_list['title'].strip().replace('"', '').replace("'", "")
+    #     body = cr.news_list['body'].strip().replace('"', '').replace("'", "")
+    #     link = cr.news_list['link']
+    # except KeyError:
+    #     return "뉴스 데이터에 필요한 키가 없습니다", 505
+    # if not cr.news_list or 'title' not in cr.news_list:
+    #     return "데이터 준비 중입니다", 200
+    #
+    # title = cr.news_list['title'].strip().replace('"', '').replace("'", "")
+    # body = cr.news_list['body'].strip().replace('"', '').replace("'", "")
+    # link = cr.news_list['link']
+    #
+    # return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
+    #                        title=title, body=body, link=link)
+
+    # title = cr.news_list['title'].strip().replace('"', '').replace("'", "")
+    # body = cr.news_list['body'].strip().replace('"', '').replace("'", "")
+    # link = cr.news_list['link']
+    # print("link = " + link)
+
+    # return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
+    #                        title=title, body=body, link=link)
