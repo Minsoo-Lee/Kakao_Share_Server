@@ -80,6 +80,8 @@ def enter_url():
     print("url에 접속 성공")
     time.sleep(2)
 
+    # 에러가 발생하는 구간 - 공유하기 버튼을 찾지 못함 (로딩이 늦게 됨)
+    # 공유하기 버튼을 찾을때까지 루프 돌리는 로직 추가
     while True:
         time.sleep(2)
         if driver.check_share_button():
