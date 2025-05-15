@@ -17,17 +17,12 @@ is_chrome_init = False
 # is_server_init = False
 
 def start_task():
-    # def run_task():
-    #     set_task()  # 여기에 작업 내용을 직접 넣으면 됩니다
 
-    # set_task()
-    #
-    # # 이후 4시간마다 실행
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(set_task, 'interval', minutes=2)
-    # scheduler.start()
-    # def run_task():
-    #     set_task()
+    # def safe_task():
+    #     try:
+    #         set_task()
+    #     except Exception as e:
+    #         print(f"[SAFE_TASK ERROR] {e}")
 
     task_thread = threading.Thread(target=set_task, daemon=False)
     task_thread.start()
@@ -36,7 +31,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=set_task, daemon=False).start(),
         'interval',
-        minutes=10
+        minutes=5
     )
     scheduler.start()
 
@@ -84,6 +79,12 @@ def enter_url():
     driver.get_url(url)
     print("url에 접속 성공")
     time.sleep(2)
+
+    while True:
+        time.sleep(2)
+        if driver.check_share_button():
+            break
+
     driver.click_share_button()
     time.sleep(2)
 

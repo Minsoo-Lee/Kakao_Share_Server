@@ -41,14 +41,23 @@ def get_url(url):
     driver.get(url)
     time.sleep(1)
 
+def check_share_button():
+    try:
+        driver.find_element(By.XPATH, "/html/body/button")
+        return True
+    except Exception as e:
+        print("공유하기 버튼을 찾고 있습니다...")
+        return False
 
 def click_share_button():
     # 이 부분은 UI 건들면 바뀔 수 있음
     try:
         driver.find_element(By.XPATH, "/html/body/button").click()
         time.sleep(1)
+        return True
     except Exception as e:
         print(e)
+        return False
 
 
 def activate_popup():
