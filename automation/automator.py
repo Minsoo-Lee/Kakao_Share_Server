@@ -18,18 +18,18 @@ is_chrome_init = False
 
 def start_task():
 
-    # def safe_task():
-    #     try:
-    #         set_task()
-    #     except Exception as e:
-    #         print(f"[SAFE_TASK ERROR] {e}")
+    def safe_task():
+        try:
+            set_task()
+        except Exception as e:
+            print(f"[SAFE_TASK ERROR] {e}")
 
-    task_thread = threading.Thread(target=set_task, daemon=False)
+    task_thread = threading.Thread(target=safe_task, daemon=False)
     task_thread.start()
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(
-        lambda: threading.Thread(target=set_task, daemon=False).start(),
+        lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'interval',
         minutes=3
     )
@@ -47,9 +47,7 @@ def set_task():
 
         # 로그인 화면이 뜨는지 확인
         if check_login_needed():
-            print("로그인 인증이 필요합니다.")
             driver.execute_login(os.getenv("ID"), os.getenv("PW"))
-            # driver.execute_login(data[0], data[1])
 
             # 못 찾을 경우 2초마다 확인
             while True:
@@ -78,14 +76,6 @@ def enter_url():
     url = os.getenv("APP_BASE_URL", "http://localhost:9005") + "/run"
     driver.get_url(url)
     print("url에 접속 성공")
-    time.sleep(2)
-
-    # 에러가 발생하는 구간 - 공유하기 버튼을 찾지 못함 (로딩이 늦게 됨)
-    # 공유하기 버튼을 찾을때까지 루프 돌리는 로직 추가
-    while True:
-        time.sleep(2)
-        if driver.check_share_button():
-            break
 
     driver.click_share_button()
     time.sleep(2)

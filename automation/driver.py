@@ -44,6 +44,7 @@ def get_url(url):
 def check_share_button():
     try:
         driver.find_element(By.XPATH, "/html/body/button")
+        print("공유하기 버튼을 찾았습니다.")
         return True
     except Exception as e:
         print("공유하기 버튼을 찾고 있습니다...")
@@ -76,10 +77,10 @@ def activate_popup():
 def check_login_needed():
     try:
         driver.find_element(By.XPATH, "/html/body/div/div/div/main/article/div/div/form/div[1]/div/input")
-        print("Login needed")
+        print("로그인 인증이 필요합니다.")
         return True
     except:
-        print("Please Login")
+        print("로그인 인증이 필요하지 않습니다.")
         return False
 
 def execute_login(id, pw):
