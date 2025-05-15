@@ -31,7 +31,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'interval',
-        minutes=3
+        minutes=2
     )
     scheduler.start()
 
@@ -76,6 +76,7 @@ def enter_url():
     url = os.getenv("APP_BASE_URL", "http://localhost:9005") + "/run"
     driver.get_url(url)
     print("url에 접속 성공")
+    time.sleep(5)
 
     driver.click_share_button()
     time.sleep(2)
