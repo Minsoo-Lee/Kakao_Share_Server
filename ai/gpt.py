@@ -110,7 +110,7 @@ def get_body_from_url(url, title):
             링크: {url}
             제목: {title}
 
-            이 링크에 접속해서 기사를 읽고, 본문을 최대한 150자에 가깝게 요약해 줘.
+            이 링크에 접속해서 기사를 읽고, 본문을 140 ~ 150자로 정리해 줘.
             그리고 문장 요약할 때 특수문자는 , . 이 두개만 써야 해. 다른 건 절대 쓰지 마
             물음표, 느낌표도 절대 쓰지마 제발 하지 말라는건 하지 마.
             쌍따옴표("), 홑따옴표(') 이 두개도 절대 쓰지 마
@@ -126,7 +126,7 @@ def get_body_from_url(url, title):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "당신은 뉴스 기사를 주어진 조건에 맞게 일목요연하게 잘 요약하는 편집자입니다."},
+            {"role": "system", "content": "당신은 뉴스 기사를 주어진 조건에 맞게 일목요연하게 잘 정리하는 편집자입니다."},
             {"role": "user", "content": prompt}
         ]
     )
