@@ -31,7 +31,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=set_task, daemon=False).start(),
         'interval',
-        minutes=5
+        minutes=3
     )
     scheduler.start()
 
