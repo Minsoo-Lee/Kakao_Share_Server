@@ -23,79 +23,8 @@ GOOGLE_URL = "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVd
 LIST_LEN = 20
 
 is_chrome_init = False
-index = 0
-
-# URL = f"{BASE_URL}/news/articleList.html?sc_sub_section_code=S2N1&view_type=sm"
 
 news_list = {}
-
-# www.ibabynews.com 크롤링
-# def crawl_lists():
-#     global URL, BASE_URL, index
-#     news_list.clear()
-#     log.append_log("크롤링을 시작합니다.")
-#     response = requests.get(BASE_URL + URL[index]['link'])
-#     print(f"======= request url = [{BASE_URL + URL[index]['link']}] =======================")
-#     gemini.init_gemini()
-#
-#     if response.status_code == 200:  # 정상 응답 반환 시 아래 코드블록 실행
-#         soup = bs(response.content, 'html.parser')  # 응답 받은 HTML 파싱
-#         lists = soup.find_all("div", {"class": 'list-block'})
-#
-#         # 차라리 여기서 3개를 추출하는 것이 빠를지도
-#         # 아직 컨셉이 잡힌 것이 없으니 놔두자
-#         for i in range(3):
-#             article_info = {}
-#
-#             # 링크 추출
-#             a_tag = lists[i].find("a", href=True)
-#             article_url = BASE_URL + a_tag["href"]
-#             article_info["url"] = article_url
-#
-#             # 날짜 추출
-#             date_div = lists[i].find("div", class_="list-dated")
-#             tmp_text = date_div.get_text(strip=True)
-#             date_text = tmp_text.split("|")[2].strip().split(" ")[0]
-#             article_info["date"] = date_text
-#
-#             # 이미지 소스 추출
-#             # img_tag = lists[i].find("img", src=True)
-#             # print(f"img_tag: {img_tag}")
-#             # img_url = BASE_URL + img_tag["src"][1:]
-#             # print(f"img_url: {img_url}")
-#             # article_info["img"] = img_url
-#
-#             # 제목 추출
-#             # 쓰레드 동기화가 걸린다면, 이건 나중에 추가하는 것도 고려해볼 만 함
-#             # 빠른 테스트를 위해 제목 고정
-#             # 원래는 이거로 동적 생성
-#             paragraph = get_paragraph(article_url)
-#             title = gemini.get_response(paragraph)
-#             article_info["title"] = title
-#             # article_info["title"] = "title"
-#
-#             response = requests.get(article_url)
-#             if response.status_code == 200:
-#                 soup_img = bs(response.content, 'html.parser')
-#                 lists_img = soup_img.find_all("div", {"class": 'IMGFLOATING'})
-#                 print(len(lists_img))
-#
-#                 if len(lists_img) == 0:
-#                     article_info["img"] = None
-#                 else:
-#                     img_tag = lists_img[0].find("img", src=True)
-#                     img_url = BASE_URL + img_tag["src"]
-#                     article_info["img"] = img_url
-#                     print(img_url)
-#
-#
-#             # description 은 "육아"로 고정
-#             article_info["description"] = URL[index]['category']
-#
-#             news_list.append(article_info)
-#     # print(json.dumps(news_list, indent=4, ensure_ascii=False))
-#     log.append_log("크롤링이 완료되었습니다.")
-#     index += 1
 
 def get_data_naver_social():
     driver.get_url(NAVER_SOCIAL_URL)
@@ -218,13 +147,34 @@ def crawl_lists_title():
             is_chrome_init = True
         article_list = from_naver(NAVER_IT_URL)
         article_list += from_naver(NAVER_SOCIAL_URL) + from_iboss() + from_google()
-        for i in range(len(article_list)):
-            print("title = " + article_list[i][0])
-            print("title = " + article_list[i][1])
-            if (i + 1) % 20 == 0:
-                print("===============================================================")
+
+        # 출력 코드
+        # for i in range(len(article_list)):
+        #     print("title = " + article_list[i][0])
+        #     print("title = " + article_list[i][1])
+        #     if (i + 1) % 20 == 0:
+        #         print("===============================================================")
+
+        print("GPT에게 응답을 요구합니다...")
+        index = 100000
+        while index >= len(article_list) or index < 0:
+            index = gpt.get_related_index(article_list)
+
+        print(f"index = {index}")
+
+        news_list['link'] = article_list[index][1]
+        news_list['title'] = article_list[index][0]
+        news_list['body'] = gpt.get_body_from_url(article_list[index][1], news_list['title'])
+
+        print("============== news list ==============")
+        print("title = " + news_list['title'])
+        print("body = " + news_list['body'])
+        print("link = " + news_list['link'])
+
+
     except Exception as e:
         print(f"[ERROR] 크롤링 중 예외 발생: {e}")
+
 
 
 def from_naver(url):

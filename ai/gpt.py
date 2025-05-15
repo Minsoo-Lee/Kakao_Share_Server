@@ -10,7 +10,7 @@ client = openai.OpenAI(api_key=os.getenv("API_KEY"))
 # 여기서 주석 해제 후 api_key 넣을 것
 # client = openai.OpenAI(api_key="")
 
-def get_related_url(body_urls):
+def get_related_index(article_list):
     # prompt = f"""
     #     내가 너에게 보내준 {body_urls}은 엔터 관련 뉴스들로 구성되어있어.
     #     각 행마다 1열은 본문 요약본, 2열은 링크가 들어 있어.
@@ -27,15 +27,15 @@ def get_related_url(body_urls):
         # 출력은 다른 말 필요 없이 url만 건네줘.
 
     prompt = f"""
-            내가 너에게 보내준 {body_urls}은 엔터 관련 뉴스들로 구성되어있어.
+            내가 너에게 보내준 {article_list}은 엔터 관련 뉴스들로 구성되어있어.
             각 행마다 1열은 제목, 2열은 링크가 들어 있어.
-            제목을 모두 다 읽고, 다음과 같은 조건을 갖춘 제목의 url을 하나만 뽑아서 출력해 줘.
+            제목을 모두 다 읽고, 다음과 같은 조건을 갖춘 제목의 url의 인덱스 하나만 뽑아서 출력해 줘.
 
             1. 기사를 선별하는 이유는 "영화" 관련 엔터 기사에 흥미가 있는 고객들에게 유의미한 정보를 제공하기 위해서야.
                 반드시 "영화" 관련 엔터 기사를 선별해 줘.
-            2. 반드시 모든 본문들을 다 확인한 후에 가장 관련성이 높은 기사를 하나만 말해.
+            2. 반드시 모든 제목들을 다 확인한 후에 가장 관련성이 높은 기사를 하나만 말해.
             3. 다른말 필요 없이 url만 말해줘. 특히 하이픈(-)이나 쌍따옴표("), 홑따옴표(')같은 특수문자는 절대로 쓰지마. 절대.
-                오로지 url만 말해줘.
+                오로지 인덱스만 말해줘.
             4. 너가 선택한 본문이 1번에 부합하는지 반드시 다시 확인해 봐. 아니면 다시 1번을 수행해.
             5. 1~4까지의 과정 중 하나라도 지켜지지 않은게 있다면 다시 답변을 생성해.
             """
@@ -50,10 +50,10 @@ def get_related_url(body_urls):
         ]
     )
 
-    # content = response.choices[0].message.content.replace("'", "")
     content = response.choices[0].message.content
-    # print(content)
-    return content
+    print(content)
+    print(type(content))
+    return int(content)
 
 
 def get_title_body(body):
@@ -97,3 +97,35 @@ def get_title_body(body):
     # print(title)
     # print(body)
     return title, body
+
+def get_body_from_url(url, title):
+    prompt = f"""
+            여기 뉴스 기사 링크와 제목이 있어.
+
+            링크: {url}
+            제목: {title}
+
+            이 링크에 접속해서 기사를 읽고, 본문을 최대한 150자에 가깝게 요약해 줘.
+            그리고 문장 요약할 때 특수문자는 , . 이 두개만 써야 해. 다른 건 절대 쓰지 마
+            물음표, 느낌표도 절대 쓰지마 제발 하지 말라는건 하지 마.
+            쌍따옴표("), 홑따옴표(') 이 두개도 절대 쓰지 마
+            그리고 다음 사항들을 꼭 지켜줘.
+            
+            1. 반드시 링크에 접속해서 기사를 꼼꼼하게 읽어 줘.
+            2. 핵심을 뽑아서, 너가 요약한 내용을 읽고도 이해가 갈 수 있도록 해야 해.
+            3. 하이픈(-)이나 쌍따옴표("), 홑따옴표(')같은 특수문자는 절대로 쓰지마. 절대.
+            4. 너가 선택한 요약한 본문이 제목과 부합하는지 반드시 다시 확인해 봐. 아니면 다시 1번을 수행해.
+            5. 1~4까지의 과정 중 하나라도 지켜지지 않은게 있다면 다시 답변을 생성해.
+            """
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "당신은 뉴스 기사를 주어진 조건에 맞게 일목요연하게 잘 요약하는 편집자입니다."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    content = response.choices[0].message.content
+    print(content)
+    return content

@@ -36,7 +36,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=set_task, daemon=False).start(),
         'interval',
-        hours=4
+        minutes=2
     )
     scheduler.start()
 
@@ -48,48 +48,41 @@ def set_task():
         print("크롤링을 시작합니다.")
         crawling.crawl_lists_title()
         print("크롤링을 완료했습니다.\n카카오톡 공유를 시작합니다.")
-        # enter_url()
+        enter_url()
 
-        # crawling 테스트로 아래 주석 처리
+        # 로그인 화면이 뜨는지 확인
+        if check_login_needed():
+            print("로그인 인증이 필요합니다.")
+            driver.execute_login(os.getenv("ID"), os.getenv("PW"))
+            # driver.execute_login(data[0], data[1])
 
-        # # 로그인 화면이 뜨는지 확인
-        # if check_login_needed():
-        #     print("로그인 인증이 필요합니다.")
-        #     driver.execute_login(os.getenv("ID"), os.getenv("PW"))
-        #     # driver.execute_login(data[0], data[1])
-        #
-        #     # 못 찾을 경우 2초마다 확인
-        #     while True:
-        #         time.sleep(2)
-        #         if driver.check_login_done():
-        #             break
-        #     # 이렇게 해도 되나?
-        #     # while driver.check_login_done() is False:
-        #     #     time.sleep(2)
-        #
-        # # 로그인 후 버튼 비활성화
-        # driver.ready_chatroom()
-        # if driver.is_chatroom_exist(os.getenv("ROOM")):
-        #     print("채팅방을 선택합니다 : " + os.getenv("ROOM"))
-        #     driver.click_chatroom()
-        #     driver.click_share()
-        #     print("메세지 공유를 완료하였습니다.")
-        #     driver.close_popup()
-        #     print("팝업창을 종료합니다.")
-        #     driver.deactivate_popup()
+            # 못 찾을 경우 2초마다 확인
+            while True:
+                time.sleep(2)
+                if driver.check_login_done():
+                    break
+            # 이렇게 해도 되나?
+            # while driver.check_login_done() is False:
+            #     time.sleep(2)
+
+        # 로그인 후 버튼 비활성화
+        driver.ready_chatroom()
+        if driver.is_chatroom_exist(os.getenv("ROOM")):
+            print("채팅방을 선택합니다 : " + os.getenv("ROOM"))
+            driver.click_chatroom()
+            driver.click_share()
+            print("메세지 공유를 완료하였습니다.")
+            driver.close_popup()
+            print("팝업창을 종료합니다.")
+            driver.deactivate_popup()
     except Exception as e:
         print(f"[set_task ERROR] {e}")
 
 def enter_url():
-    # global is_chrome_init
-    #
-    # if is_chrome_init is False:
-    #     wx.CallAfter(log.append_log, "크롬을 초기화합니다.")
-    #     driver.init_chrome()
-    #     wx.CallAfter(log.append_log, "크롬 초기화 완료")
-    #     is_chrome_init = True
+    print("로컬 url에 접속합니다...")
     url = os.getenv("APP_BASE_URL", "http://localhost:9005") + "/run"
     driver.get_url(url)
+    print("url에 접속 성공")
     time.sleep(2)
     driver.click_share_button()
     time.sleep(2)
