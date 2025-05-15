@@ -46,35 +46,37 @@ def set_task():
     global if_login_success
     try:
         print("크롤링을 시작합니다.")
-        crawling.crawl_lists()
+        crawling.crawl_lists_title()
         print("크롤링을 완료했습니다.\n카카오톡 공유를 시작합니다.")
-        enter_url()
+        # enter_url()
 
-        # 로그인 화면이 뜨는지 확인
-        if check_login_needed():
-            print("로그인 인증이 필요합니다.")
-            driver.execute_login(os.getenv("ID"), os.getenv("PW"))
-            # driver.execute_login(data[0], data[1])
+        # crawling 테스트로 아래 주석 처리
 
-            # 못 찾을 경우 2초마다 확인
-            while True:
-                time.sleep(2)
-                if driver.check_login_done():
-                    break
-            # 이렇게 해도 되나?
-            # while driver.check_login_done() is False:
-            #     time.sleep(2)
-
-        # 로그인 후 버튼 비활성화
-        driver.ready_chatroom()
-        if driver.is_chatroom_exist(os.getenv("ROOM")):
-            print("채팅방을 선택합니다 : " + os.getenv("ROOM"))
-            driver.click_chatroom()
-            driver.click_share()
-            print("메세지 공유를 완료하였습니다.")
-            driver.close_popup()
-            print("팝업창을 종료합니다.")
-            driver.deactivate_popup()
+        # # 로그인 화면이 뜨는지 확인
+        # if check_login_needed():
+        #     print("로그인 인증이 필요합니다.")
+        #     driver.execute_login(os.getenv("ID"), os.getenv("PW"))
+        #     # driver.execute_login(data[0], data[1])
+        #
+        #     # 못 찾을 경우 2초마다 확인
+        #     while True:
+        #         time.sleep(2)
+        #         if driver.check_login_done():
+        #             break
+        #     # 이렇게 해도 되나?
+        #     # while driver.check_login_done() is False:
+        #     #     time.sleep(2)
+        #
+        # # 로그인 후 버튼 비활성화
+        # driver.ready_chatroom()
+        # if driver.is_chatroom_exist(os.getenv("ROOM")):
+        #     print("채팅방을 선택합니다 : " + os.getenv("ROOM"))
+        #     driver.click_chatroom()
+        #     driver.click_share()
+        #     print("메세지 공유를 완료하였습니다.")
+        #     driver.close_popup()
+        #     print("팝업창을 종료합니다.")
+        #     driver.deactivate_popup()
     except Exception as e:
         print(f"[set_task ERROR] {e}")
 
