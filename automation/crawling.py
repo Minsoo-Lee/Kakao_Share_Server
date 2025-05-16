@@ -150,14 +150,17 @@ def crawl_lists_title():
         article_list += from_naver(NAVER_SOCIAL_URL) + from_iboss() + from_google()
 
         # 뒤에도 보게 하도록 리스트를 랜덤하게 셔플
+        print("기사를 랜덤하게 셔플합니다.")
         shuffle(article_list)
+        print("=============== 섞은 후 (예시 10개) ===============")
+
 
         # 출력 코드
-        # for i in range(len(article_list)):
-        #     print("title = " + article_list[i][0])
-        #     print("title = " + article_list[i][1])
-        #     if (i + 1) % 20 == 0:
-        #         print("===============================================================")
+        for i in range(10):
+            print("title = " + article_list[i][0])
+            print("title = " + article_list[i][1])
+            print("-----------------------------------------------------------------")
+        print("===============================================================")
 
         print("GPT에게 응답을 요구합니다...")
         index = 100000
