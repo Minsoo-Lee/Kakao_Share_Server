@@ -146,26 +146,33 @@ def crawl_lists_title():
         if is_chrome_init is False:
             driver.init_chrome()
             is_chrome_init = True
-        article_list = from_naver(NAVER_IT_URL)
-        article_list += from_naver(NAVER_SOCIAL_URL) + from_iboss() + from_google()
+        # article_list = from_naver(NAVER_IT_URL)
+        # article_list += from_naver(NAVER_SOCIAL_URL) + from_iboss() + from_google()
+
+
+        # 1개씩 가져올 경우 다르게
+        article_list = []
+        article_list.append(from_naver(NAVER_IT_URL))
+        article_list.append(from_naver(NAVER_SOCIAL_URL))
+        article_list.append(from_iboss())
+        article_list.append(from_google())
 
         # 뒤에도 보게 하도록 리스트를 랜덤하게 셔플
-        print("기사를 랜덤하게 셔플합니다.")
-        shuffle(article_list)
-        print("=============== 섞은 후 (예시 10개) ===============")
-
-
+        # print("기사를 랜덤하게 셔플합니다.")
+        # shuffle(article_list)
+        # print("=============== 섞은 후 (예시 10개) ===============")
+        #
+        #
         # 출력 코드
-        for i in range(10):
-            print("title = " + article_list[i][0])
-            print("title = " + article_list[i][1])
-            print("-----------------------------------------------------------------")
-        print("===============================================================")
+        # for i in range(len(article_list)):
+        #     print("title = " + article_list[i][0])
+        #     print("title = " + article_list[i][1])
+        #     print("-----------------------------------------------------------------")
+        # print("===============================================================")
+
 
         print("GPT에게 응답을 요구합니다...")
-        index = 100000
-        while index >= len(article_list) or index < 0:
-            index = gpt.get_related_index(article_list)
+        index = get_one(article_list)
 
         news_list['link'] = article_list[index][1]
         news_list['title'] = article_list[index][0]
@@ -173,7 +180,7 @@ def crawl_lists_title():
 
         print("============== news list ==============")
         link = news_list['link']
-        if "iboss" in link:
+        if "i-boss" in link:
             print("source = 아이보스")
         elif "google" in link:
             print("source = 구글")
@@ -202,7 +209,16 @@ def from_naver(url):
     href_list = [li.find("a", href=True)["href"] for li in lists if li.find("a", href=True)]
 
     time.sleep(2)
-    return [[title_list[i].text, href_list[i]] for i in range(LIST_LEN)]
+
+    # return [[title_list[i].text, href_list[i]] for i in range(LIST_LEN)]
+
+    article_list = [[title_list[i].text, href_list[i]] for i in range(len(title_list))]
+    index = get_one(article_list)
+
+    # 출력결과
+    print("title = " + article_list[index][0])
+    print("title = " + article_list[index][1])
+    return article_list[index]
 
 def from_iboss():
     driver.get_url(IBOSS_URL)
@@ -223,7 +239,13 @@ def from_iboss():
             href_list.append(IBOSS_URL + a_tag["href"])
 
     time.sleep(2)
-    return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
+    # return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
+    article_list = [[title_list[i], href_list[i]] for i in range(len(title_list))]
+    index = get_one(article_list)
+
+    print("title = " + article_list[index][0])
+    print("title = " + article_list[index][1])
+    return article_list[index]
 
 def from_google():
     driver.get_url(GOOGLE_URL)
@@ -254,4 +276,15 @@ def from_google():
         #         break
 
     time.sleep(2)
-    return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
+    # return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
+    article_list = [[title_list[i], href_list[i]] for i in range(50)]
+    index = get_one(article_list)
+    print("title = " + article_list[index][0])
+    print("title = " + article_list[index][1])
+    return article_list[index]
+
+def get_one(article_list):
+    index = len(article_list)
+    while index >= len(article_list) or index < 0:
+        index = gpt.get_related_index(article_list)
+    return index
