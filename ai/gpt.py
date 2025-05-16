@@ -56,8 +56,6 @@ def get_related_index(article_list):
     )
 
     content = response.choices[0].message.content
-    print(content)
-    print(type(content))
     return int(content)
 
 

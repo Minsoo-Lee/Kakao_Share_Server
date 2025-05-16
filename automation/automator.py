@@ -31,7 +31,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'interval',
-        hours=2
+        minutes=10
     )
     scheduler.start()
 
@@ -84,11 +84,3 @@ def enter_url():
 
     # 팝업창 전환 후 로그인
     driver.activate_popup()
-
-# 이건 메인문에서 실행
-# driver.execute_login()
-
-# 작업 수행 버튼 다시 활성화 하고, 로그인 인증 진행
-
-# 로그인 했을 시 보여야 하는 요소가 뜨는지 확인
-

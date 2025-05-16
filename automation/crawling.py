@@ -3,6 +3,7 @@ import threading
 from automation import driver
 import time
 from ai import gpt
+from random import shuffle
 
 import requests
 
@@ -148,6 +149,9 @@ def crawl_lists_title():
         article_list = from_naver(NAVER_IT_URL)
         article_list += from_naver(NAVER_SOCIAL_URL) + from_iboss() + from_google()
 
+        # 뒤에도 보게 하도록 리스트를 랜덤하게 셔플
+        shuffle(article_list)
+
         # 출력 코드
         # for i in range(len(article_list)):
         #     print("title = " + article_list[i][0])
@@ -160,17 +164,21 @@ def crawl_lists_title():
         while index >= len(article_list) or index < 0:
             index = gpt.get_related_index(article_list)
 
-        print(f"index = {index}")
-
         news_list['link'] = article_list[index][1]
         news_list['title'] = article_list[index][0]
         news_list['body'] = gpt.get_body_from_url(article_list[index][1], news_list['title'])
 
         print("============== news list ==============")
+        link = news_list['link']
+        if "iboss" in link:
+            print("source = 아이보스")
+        elif "google" in link:
+            print("source = 구글")
+        elif "naver" in link:
+            print("source = 네이버")
         print("title = " + news_list['title'])
         print("body = " + news_list['body'])
         print("link = " + news_list['link'])
-
 
     except Exception as e:
         print(f"[ERROR] 크롤링 중 예외 발생: {e}")
