@@ -1,3 +1,5 @@
+import traceback
+
 from bs4 import BeautifulSoup as bs
 import threading
 from automation import driver
@@ -18,8 +20,9 @@ import requests
 BASE_URL = "https://m.entertain.naver.com/now"
 NAVER_IT_URL = "https://news.naver.com/breakingnews/section/105/230"
 NAVER_SOCIAL_URL = "https://news.naver.com/breakingnews/section/102/250"
-IBOSS_URL = "https://www.i-boss.co.kr/ab-7214"
-GOOGLE_URL = "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR%3Ako"
+IBOSS_URL = "https://www.i-boss.co.kr"
+# GOOGLE_URL = "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR%3Ako"
+GOOGLE_URL = "https://www.google.com/search?sca_esv=9a5e0d52e8e6d667&sxsrf=AHTn8zpgotSk2g98GiUyDIt0zAI2JvIJwQ:1747397951848&q=%EA%B5%90%EC%9C%A1&tbm=nws&source=lnms&fbs=ABzOT_CZsxZeNKUEEOfuRMhc2yCIN42EXxa9ZSNEwtiPEbQrp-oREuj69PlSffsqaZff35ttlTfDht-WBlJ2aWSHHA1tbDwCB-lbeuNcJdOYidBlctfWWHzdvZiE_XhVRdtnTJhPIpOPMz9G8fuPY-9ugU3rcYoKVhtXR2vHa1EnDoKao07ACNN9l-1Xib0UvA7f7ZjkeMj4I2LmKtS6iT-8ojUPBGEifg&sa=X&ved=2ahUKEwjk5M3R_KeNAxXgklYBHSAqANEQ0pQJegQIHBAB&biw=1365&bih=934&dpr=1"
 
 LIST_LEN = 20
 
@@ -221,7 +224,7 @@ def from_naver(url):
     return article_list[index]
 
 def from_iboss():
-    driver.get_url(IBOSS_URL)
+    driver.get_url(IBOSS_URL + "/ab-7214")
 
     time.sleep(2)
     print("아이보스에서 기사를 긁어옵니다...")
@@ -254,30 +257,29 @@ def from_google():
     print("구글뉴스에서 기사를 긁어옵니다...")
     soup = bs(driver.get_pagesource(), 'lxml')
 
-    # 1. span.subject_text 아래 있는 a 태그 모두 찾기
-    articles = soup.find_all("article")
-    title_list = []
-    href_list = []
+    # n0jPhd ynAwRc tNxQIb nDgy9d
 
-    for article in articles:
-        a_tags = article.find_all("a", href=True)
-        for a in a_tags:
-            text = a.get_text(strip=True)
-            if text:  # 내용이 있는 a 태그만 대상
-                title_list.append(text)
-                href_list.append(GOOGLE_URL + a["href"])
-                break  # 제목 있는 a 하나만 가져오면 됨
-        # for a in a_tag:
-        #     text = a.get_text(strip=True)
-        #     print("text = " + text)
-        #     if text:
-        #         title_list.append(text)
-        #         href_list.append(GOOGLE_URL + a_tag["href"])
-        #         break
+    title_lists_1 = soup.find_all("div", class_=lambda x: x and 'n0jPhd ynAwRc tNxQIb nDgy9d' in x)
+    title_lists_2 = soup.find_all("div", class_=lambda x: x and 'n0jPhd ynAwRc MBeuO nDgy9d' in x)
+    title_list = []
+    for title_div in title_lists_1:
+        text = title_div.get_text(strip=True)  # 또는 title_div.text.strip()
+        title_list.append(text)
+    for title_div in title_lists_2:
+        text = title_div.get_text(strip=True)  # 또는 title_div.text.strip()
+        title_list.append(text)
+
+    url_lists = soup.find_all("a", class_=lambda x: x and 'WlydOe' in x)
+    href_list = [li['href'] for li in url_lists if li.has_attr('href')]
+
+    # for title in title_list:
+    #     print(title)
+    # for url in href_list:
+    #     print(url)
 
     time.sleep(2)
     # return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
-    article_list = [[title_list[i], href_list[i]] for i in range(50)]
+    article_list = [[title_list[i], href_list[i]] for i in range(len(title_list))]
     index = get_one(article_list)
     print("title = " + article_list[index][0])
     print("title = " + article_list[index][1])

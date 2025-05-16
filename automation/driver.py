@@ -7,6 +7,7 @@ driver = None
 URL = "https://localhost:"
 PORT = "9005"
 main_window = None
+main_tab = None
 inp_check = None
 
 def init_chrome():
@@ -148,3 +149,65 @@ def get_pagesource():
 def get_body():
     element = driver.find_element(By.XPATH, "/html/body/div/div[2]/div/div[1]/div/div[1]/div/div[2]/article/div[1]")
     return element.text
+
+def get_title_list():
+    return driver.find_elements(By.CLASS_NAME, "gPFEn")
+
+
+def get_url_list():
+    return driver.find_elements(By.CLASS_NAME, "WwrzSb")
+
+def enter_tab(a):
+    global main_tab
+
+    # 현재 탭 저장
+    main_tab = driver.current_window_handle
+
+    # JS로 새 탭에서 열기
+    a.click()
+    # time.sleep(2)
+
+    # 새 탭으로 전환
+    all_tabs = driver.window_handles
+    new_tab = [tab for tab in all_tabs if tab != main_tab][0]
+    driver.switch_to.window(new_tab)
+    # time.sleep(2)
+
+def obtain_url():
+    return driver.current_url
+
+def return_to_tab():
+    driver.close()
+    # time.sleep(2)
+    driver.switch_to.window(main_tab)
+    time.sleep(1)
+
+
+# test
+def test():
+    global driver
+    if driver is None:
+        chrome_options = Options()
+
+        # ✅ 필수: Headless 서버 환경에서 필요한 옵션
+        # chrome_options.add_argument('--headless')  # 화면 없이 실행
+        chrome_options.add_argument('--no-sandbox')  # 보안 샌드박스 비활성화
+        chrome_options.add_argument('--disable-dev-shm-usage')  # 메모리 사용 제한 해제
+        chrome_options.add_argument('--disable-gpu')  # GPU 비활성화 (가끔 필요)
+        chrome_options.add_argument('--window-size=1920x1080')  # 뷰포트 설정
+
+        # 선택 옵션
+        chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 1
+        })
+        chrome_options.add_experimental_option("detach", True)
+
+        # ChromeDriver 경로가 환경에 따라 다르다면 명시 필요
+        driver = webdriver.Chrome(options=chrome_options)
+
+        time.sleep(1)
+
+    driver.get("https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR%3Ako")
+    time.sleep(1)
+    driver.find_element(By.CLASS_NAME, "WwrzSb").click()
+
