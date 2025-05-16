@@ -31,10 +31,11 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'interval',
-        hours=1
+        hours=2
     )
     scheduler.start()
 
+    # @sched.scheduled_job('cron', hour='*/1', minuite='0', id='프로세스 id 넣을것')
 
 
 def set_task():
