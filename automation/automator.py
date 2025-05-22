@@ -38,7 +38,6 @@ def start_task():
 
     # @sched.scheduled_job('cron', hour='*/1', minuite='0', id='프로세스 id 넣을것')
 
-
 def set_task():
     global if_login_success
     try:
