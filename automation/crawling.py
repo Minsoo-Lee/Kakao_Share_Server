@@ -154,27 +154,11 @@ def crawl_lists_title():
 
 
         # 1개씩 가져올 경우 다르게
-        article_list = []
-        article_list.append(from_naver(NAVER_IT_URL))
-        article_list.append(from_naver(NAVER_SOCIAL_URL))
+        article_list = from_naver(NAVER_IT_URL)
+        article_list.extend(from_naver(NAVER_SOCIAL_URL))
         # article_list.append(from_iboss())
-        article_list.append(from_google())
-
-        for i in range(len(article_list)):
-            print(article_list[i][0])
-
-        # 뒤에도 보게 하도록 리스트를 랜덤하게 셔플
-        # print("기사를 랜덤하게 셔플합니다.")
-        # shuffle(article_list)
-        # print("=============== 섞은 후 (예시 10개) ===============")
-        #
-        #
-        # 출력 코드
-        # for i in range(len(article_list)):
-        #     print("title = " + article_list[i][0])
-        #     print("title = " + article_list[i][1])
-        #     print("-----------------------------------------------------------------")
-        # print("===============================================================")
+        article_list.extend(from_google())
+        print(gpt.get_related_index(article_list))
 
 
         print("GPT에게 응답을 요구합니다...")
@@ -219,14 +203,15 @@ def from_naver(url):
     # return [[title_list[i].text, href_list[i]] for i in range(LIST_LEN)]
 
     article_list = [[title_list[i].text, href_list[i]] for i in range(len(title_list))]
-    for i in range(len(article_list)):
-        print(article_list[i][0])
-    index = get_one(article_list)
+    # for i in range(len(article_list)):
+    #     print(article_list[i][0])
+    # index = get_one(article_list)
 
     # 출력결과
     # print("title = " + article_list[index][0])
     # print("title = " + article_list[index][1])
-    return article_list[index]
+    # return article_list[index]
+    return article_list
 
 def from_iboss():
     driver.get_url(IBOSS_URL + "/ab-7214")
@@ -278,7 +263,7 @@ def from_google():
 
     url_lists = soup.find_all("a", class_=lambda x: x and 'WlydOe' in x)
     href_list = [li['href'] for li in url_lists if li.has_attr('href')]
-    print(title_list)
+    # print(title_list)
 
     # for title in title_list:
     #     print(title)
@@ -288,11 +273,12 @@ def from_google():
     time.sleep(2)
     # return [[title_list[i], href_list[i]] for i in range(min(20, len(title_list), len(href_list)))]
     article_list = [[title_list[i], href_list[i]] for i in range(len(title_list))]
-    index = get_one(article_list)
+    # index = get_one(article_list)
 
     # print("title = " + article_list[index][0])
     # print("title = " + article_list[index][1])
-    return article_list[index]
+    # return article_list[index]
+    return article_list
 
 def get_one(article_list):
     index = len(article_list)
