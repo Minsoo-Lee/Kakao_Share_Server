@@ -58,8 +58,8 @@ def get_related_index(article_list):
         model="gpt-4.1-nano",
         messages=[
             # {"role": "system", "content": "너는 키즈에이전시 관계자야. 너는 많은 학부모들을 관리하고 있으며 그들에게 유의미한 정보를 전달하려고 해."},
-            {"role": "system", "content": "너는 엔터테인먼트 기사를 다루는 마케터야. 고객들이 원하는 주제를 가진 엔터테인먼트 기사를 하나 " +
-                                          "선별할 수 있는 능력이 있어"},
+            # {"role": "system", "content": "너는 엔터테인먼트 기사를 다루는 마케터야. 고객들이 원하는 주제를 가진 엔터테인먼트 기사를 하나 " +
+            #                               "선별할 수 있는 능력이 있어"},
             {"role": "user", "content": prompt}
         ]
     )
