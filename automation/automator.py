@@ -42,7 +42,8 @@ def set_task():
     global if_login_success
     try:
         print("크롤링을 시작합니다.")
-        crawling.crawl_lists_title()
+        # crawling.crawl_lists_title()
+        crawling.crawl_news()
         print("크롤링을 완료했습니다.\n카카오톡 공유를 시작합니다.")
         enter_url()
 

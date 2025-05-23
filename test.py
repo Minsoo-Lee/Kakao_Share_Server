@@ -1,3 +1,3 @@
-from automation import driver
+from automation import driver, crawling
 
-driver.test()
+crawling.crawl_news()

@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask, render_template
 import threading, os
 from automation import crawling as cr
@@ -75,13 +77,20 @@ def run():
     if not cr.news_list or 'title' not in cr.news_list:
         return "데이터 준비 중입니다", 200
 
-    title = cr.news_list['title'].strip().replace('"', '').replace("'", "")
-    body = cr.news_list['body'].strip().replace('"', '').replace("'", "")
+    title = cr.news_list['title']
+    summary = cr.news_list['summary']
     link = cr.news_list['link']
 
     return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
-                           title=title, body=body, link=link)
+                           hour=time.strftime("%H"), minute=time.strftime("%M"),
+                           title=title, summary=summary, link=link)
 
+@app.route('/')
+def test_buttons():
+    title = ""
+    return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
+                           hour=time.strftime("%H"), minute=time.strftime("%M"),
+                           title=title)
 
 @app.route('/', methods=["GET", "HEAD"])
 def share():

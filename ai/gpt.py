@@ -1,14 +1,62 @@
 import openai
 import os
 from dotenv import load_dotenv
-
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionSystemMessageParam, \
+    ChatCompletionUserMessageParam
 
 # .env 파일에서 API 키 불러오기
 load_dotenv()
 client = openai.OpenAI(api_key=os.getenv("API_KEY"))
 
-# 여기서 주석 해제 후 api_key 넣을 것
-# client = openai.OpenAI(api_key="")
+### 새 코드 (AI 단톡방 타겟) ###
+openai.api_key = os.getenv("API_KEY")
+
+def get_related_title(title_list):
+    prompt = f"""
+                내가 AI 기사 제목들을 보여 줄게.
+
+                {title_list}
+                
+                이 기사 제목들을 전부 확인하고, AI 관련된 일을 하는 사람들이 가장 필요로 할 기사 제목의 인덱스를 하나 말해줘.
+                다른 말 하지 말고, 너가 선택한 기사 제목의 인덱스를 숫자로만 그대로 말해줘.
+                """
+
+    response = client.responses.create(
+        model="gpt-4.1-nano",
+        input = prompt,
+    )
+
+    return int(response.output_text)
+
+# 본문을 스크랩해 오는 경우 토큰이 너무 많이 낭비될 우려가 있음
+# 따라서, 본문을 스크랩해 오는 대신 link를 접속하는 방식으로 전환
+# 정확성이 많이 떨어질 경우 본문을 스크랩해 오는 방식으로 대체 -> 아예 링크를 접속 못한다고 선그음... 본문을 전달하는거로...
+def summarize_body(body):
+    prompt = f"""
+            내가 AI 기사를 보여 줄게.
+
+            {body}
+
+            첫 번째로, 반드시 이 기사 본문을 꼼꼼히 읽어줘.
+            그 후에, 너가 꼼꼼하게 읽은 내용을 다음과 같은 형태로 3줄로 요약해 줘.
+            요약한 내용들은 각 번호마다 공백 포함 100자 이내로, 명사형으로 끝나게 해.
+            
+            1. (너가 요약한 내용 1)
+            2. (너가 요약한 내용 2)
+            3. (너가 요약한 내용 3)
+            
+            반드시 저 틀을 지켜서 해줘.
+            """
+
+    response = client.responses.create(
+        model="gpt-4.1-nano",
+        input=prompt,
+    )
+
+    return response.output_text
+
+
+### 예전 코드 (키즈 에이전시 관련) ###
 
 def get_related_index(article_list):
     # prompt = f"""

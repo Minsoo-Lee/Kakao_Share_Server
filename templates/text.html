@@ -14,13 +14,16 @@
     Kakao.Share.createDefaultButton({
       container: '#kakaotalk-share-btn',
       objectType: 'text',
-      text: "["+'{{ title }}'+"]" + "\n\n" + '{{ body }}',
+      text: "[🤖 AI 뉴스봇 " + {{ hour }} + ":" + {{ minute }} + " ⏰]\n\n"
+        + "📰 " + {{ title|tojson }} + "\n\n"
+        + "📌 요약 3줄\n" + {{ summary|tojson }},
       link: {
         // mobileWebUrl: '{{ link }}',
         // webUrl: '{{ link }}',
         mobileWebUrl: "https://redirect-proxy.illusionists1004.workers.dev?url=" + '{{ link }}',
         webUrl: "https://redirect-proxy.illusionists1004.workers.dev?url=" + '{{ link }}',
       },
+      buttonTitle: "기사 읽기",
     });
 
   </script>

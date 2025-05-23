@@ -231,3 +231,17 @@
    - 찾아야 하는 문장을 여러 군데에 심어 놓고, GPT에게 찾으라고 명령
 2. 토큰의 양이 많아 데이터 처리가 느려서 그런 일이 생기는 것인가?
     - 제목의 개수를 80개, 70개, 60개, 50개 점차 줄여가며 잘 찾는지 확인
+***
+### 타겟 설정
+1. 설정할 단톡방: AI 에 관심이 많은 사람들이 포함된 방
+2. AI 관련 정보들을 일정 시간 별로 제공
+3. 뉴스 채널 후보군: https://lekohoo.com/news/ai.php 에서 상위 4개 선택
+   - AI 타임즈 (https://www.aitimes.com/news/articleList.html?sc_sub_section_code=S2N110&view_type=sm)  
+     => 가장 기본적이고 보급이 잘 되어 있음
+   - 인공지능신문 (https://www.aitimes.kr/news/articleList.html?page=1&total=20190&sc_section_code=&sc_sub_section_code=&sc_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm)  
+     => AI 분야별로 정리
+   - 더에이아이 (https://www.newstheai.com/news/articleList.html?view_type=sm)  
+     => AI 분야별로 정리
+   - AI매트로 (https://aimatters.co.kr/category/news-report/ai-news)  
+     => AI 논문과 관련된 기사 / 리포트 들이 있음
+4. 
