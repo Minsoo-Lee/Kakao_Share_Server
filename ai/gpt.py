@@ -1,3 +1,5 @@
+from collections import deque
+
 import openai
 import os
 from dotenv import load_dotenv
@@ -10,6 +12,7 @@ client = openai.OpenAI(api_key=os.getenv("API_KEY"))
 
 ### 새 코드 (AI 단톡방 타겟) ###
 openai.api_key = os.getenv("API_KEY")
+prev_list = deque(maxlen=20)
 
 def get_related_title(title_list):
     prompt = f"""
@@ -17,17 +20,27 @@ def get_related_title(title_list):
 
                 {title_list}
                 
+                참고로 너는 이전에 다음 기사들을 골랐어:
+                {list(prev_list)}
+        
                 이 기사 제목들을 전부 확인하고, AI 관련된 일을 하는 사람들이 가장 필요로 할 기사 제목의 인덱스를 하나 말해줘.
-                대신에, 너가 전에 골랐던 기사는 반드시 피해 줘.
+                대신에, 너가 전에 골랐던 기사들은 반드시 피해 줘.
                 다른 말 하지 말고, 너가 선택한 기사 제목의 인덱스를 숫자로만 그대로 말해줘.
                 """
 
     response = client.responses.create(
         model="gpt-4.1-nano",
-        input = prompt,
+        input=prompt,
     )
 
-    return int(response.output_text)
+    # GPT가 고른 인덱스
+    index = int(response.output_text)
+    title = title_list[index]
+
+    # 제목 저장 (자동으로 오래된 건 제거됨)
+    prev_list.append(title)
+
+    return index
 
 # 본문을 스크랩해 오는 경우 토큰이 너무 많이 낭비될 우려가 있음
 # 따라서, 본문을 스크랩해 오는 대신 link를 접속하는 방식으로 전환
