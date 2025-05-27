@@ -80,7 +80,7 @@ def from_the_ai(index):
 
         for title in titles:
             a_tag = title.select_one("a")
-            news_maps[a_tag.get_text()] = NEWS_LINKS[index] + a_tag["href"]
+            news_maps[a_tag.get_text().strip()] = NEWS_LINKS[index] + a_tag["href"]
 
     for key, value in news_maps.items():
         print(f"key = {key}")
@@ -115,7 +115,7 @@ def from_ai_matters(index):
 
         for title in titles:
             a_tag = title.select_one("a")
-            news_maps[a_tag.get_text()] = a_tag["href"]
+            news_maps[a_tag.get_text().strip()] = a_tag["href"]
 
     for key, value in news_maps.items():
         print(f"key = {key}")
