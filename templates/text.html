@@ -14,7 +14,7 @@
     Kakao.Share.createDefaultButton({
       container: '#kakaotalk-share-btn',
       objectType: 'text',
-      text: "[🤖 AI 뉴스봇 " + {{ hour }} + ":" + {{ minute }} + " ⏰]\n\n"
+      text: "[🤖 AI 뉴스봇 " + {{ time|tojson }} + " ⏰]\n\n"
         + "📰 " + {{ title|tojson }} + "\n\n"
         + "📌  요약 3줄\n" + {{ summary|tojson }} + "\n\n"
         + "🤔 이게 왜 중요해? \n" + {{ important|tojson }} + "\n",

@@ -83,7 +83,8 @@ def run():
     important = cr.news_list['important']
 
     return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
-                           hour=time.strftime("%H"), minute=time.strftime("%M"),
+                           time = time.strftime("%H:%M"),
+                           # hour=time.strftime("%H"), minute=time.strftime("%M"),
                            title=title, summary=summary, link=link, important=important)
 
 @app.route('/')
