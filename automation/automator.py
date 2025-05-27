@@ -31,7 +31,7 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'interval',
-        minutes=10
+        minutes=int(os.getenv("INTERVAL"))
     )
 
     scheduler.start()
@@ -85,3 +85,4 @@ def enter_url():
 
     # 팝업창 전환 후 로그인
     driver.activate_popup()
+    time.sleep(2)
