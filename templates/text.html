@@ -16,7 +16,8 @@
       objectType: 'text',
       text: "[🤖 AI 뉴스봇 " + {{ hour }} + ":" + {{ minute }} + " ⏰]\n\n"
         + "📰 " + {{ title|tojson }} + "\n\n"
-        + "📌 요약 3줄\n" + {{ summary|tojson }},
+        + "📌  요약 3줄\n" + {{ summary|tojson }} + "\n\n"
+        + "🤔 이게 왜 중요해? \n" + {{ important|tojson }} + "\n",
       link: {
         // mobileWebUrl: '{{ link }}',
         // webUrl: '{{ link }}',

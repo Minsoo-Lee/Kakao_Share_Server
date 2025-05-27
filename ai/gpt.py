@@ -56,6 +56,27 @@ def summarize_body(body):
     return response.output_text
 
 
+def get_why_important(summary):
+    prompt = f"""
+            너가 방금 요약해준 AI 기사를 보여 줄게.
+            
+            {summary}
+
+            첫 번째로, 반드시 이 요약본을 꼼꼼히 읽어줘.
+            그 후에, 너가 꼼꼼하게 읽은 내용을 바탕으로 이 기사가 왜 중요한지 설명해 줘.
+            그 내용은 공백 포함 150자 이내로 해 줘. 말투는 친근하게 부탁해.
+
+            반드시 저 틀을 지켜서 해줘.
+            """
+
+    response = client.responses.create(
+        model="gpt-4.1-nano",
+        input=prompt,
+    )
+
+    return response.output_text
+
+
 ### 예전 코드 (키즈 에이전시 관련) ###
 
 def get_related_index(article_list):

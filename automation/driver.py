@@ -92,6 +92,7 @@ def execute_login(id, pw):
     time.sleep(1)
 
 def close_popup():
+    time.sleep(1)
     driver.find_element(By.XPATH, "/html/body/div/div/div[2]/div[3]/button").click()
     time.sleep(1)
 

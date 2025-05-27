@@ -80,10 +80,11 @@ def run():
     title = cr.news_list['title']
     summary = cr.news_list['summary']
     link = cr.news_list['link']
+    important = cr.news_list['important']
 
     return render_template('text.html', app_key='c03ce9560aa54cba52b9fc2c4db6b3aa',
                            hour=time.strftime("%H"), minute=time.strftime("%M"),
-                           title=title, summary=summary, link=link)
+                           title=title, summary=summary, link=link, important=important)
 
 @app.route('/')
 def test_buttons():

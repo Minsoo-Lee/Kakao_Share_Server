@@ -1,16 +1,11 @@
-import traceback
-
 from bs4 import BeautifulSoup as bs
-import threading
-
-from pyasn1_modules.rfc6402 import bodyIdMax
-
 from automation import driver
 import time
 from ai import gpt
-from random import shuffle
 
 import requests
+
+from automation.ai_crawling import *
 
 # BASE_URL = "https://www.ibabynews.com"
 # URL = [
@@ -31,37 +26,31 @@ is_chrome_init = False
 
 news_list = {}
 
-### AI 단톡방을 타겟으로 한 서비스 ###
-AI_TIMES = "https://www.aitimes.com"
-AI_TIMES_KR = "https://www.aitimes.kr/news/articleList.html?page=1&total=20190&sc_section_code=&sc_sub_section_code=&sc_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm"
-THE_AI = "https://www.newstheai.com/news/articleList.html?view_type=sm"
-AI_METRO = "https://aimatters.co.kr/category/news-report/ai-news"
-
-# 한시간마다 돌아가면서 크롤링하기 때문
-NEWS_LINKS = [AI_TIMES, AI_TIMES_KR, THE_AI, AI_METRO]  # 리스트를 돌아가면서 순회
+# 리스트를 돌아가면서 순회
 news_index = 0
-news_map = {}
-
 
 def crawl_news():
+    global news_index
     try:
+        index = news_index % 4
         global BASE_URL, is_chrome_init
         news_list.clear()
         if is_chrome_init is False:
             driver.init_chrome()
             is_chrome_init = True
 
-        news_maps = from_ai_times()
+        news_maps = crawl_function_list[index](index)
         title_list = []
         for key, value in news_maps.items():
             title_list.append(key)
 
-        index = gpt.get_related_title(title_list)
-        title = title_list[index]
+        title_index = gpt.get_related_title(title_list)
+        title = title_list[title_index]
         link = news_maps[title]
 
-        body = body_from_ai_times(news_maps[title_list[index]])
+        body = crawl_body_list[index](news_maps[title])
         summary = gpt.summarize_body(body)
+        important = gpt.get_why_important(body)
 
         # summary = summary.replace('1.', '1️⃣')
         # summary = summary.replace('2.', '2️⃣')
@@ -75,49 +64,12 @@ def crawl_news():
         news_list['title'] = title
         news_list['summary'] = summary
         news_list['link'] = link
+        news_list['important'] = important
 
-        # print("GPT에게 응답을 요구합니다...")
-        # index = get_one(article_list)
-        #
-        # news_list['link'] = article_list[index][1]
-        # news_list['title'] = article_list[index][0]
-        # news_list['body'] = gpt.get_body_from_url(article_list[index][1], news_list['title'])
+        news_index += 1
 
     except Exception as e:
         print(f"[ERROR] 크롤링 중 예외 발생: {e}")
-
-
-def from_ai_times():
-    news_maps = {}
-    print("AI 타임즈에서 기사를 수집합니다...")
-    response = requests.get(AI_TIMES + "/news/articleList.html?sc_sub_section_code=S2N110&view_type=sm")
-
-    if response.status_code == 200:
-        soup = bs(response.text, "html.parser")
-        titles = soup.select("h4.titles")
-
-        for title in titles:
-            a_tag = title.select_one("a")
-            news_maps[a_tag.get_text()] = AI_TIMES + a_tag["href"]
-
-    return news_maps
-
-def body_from_ai_times(link):
-    response = requests.get(link)
-
-    if response.status_code == 200:
-        soup = bs(response.text, "html.parser")
-        article_div = soup.find("article", id="article-view-content-div")
-        p_tags = article_div.find_all("p")
-        body = ""
-        for p_tag in p_tags:
-            if "뉴스입니다" in p_tag.get_text():
-                break
-            body += p_tag.get_text() + "\n"
-
-        return body
-    else: return None
-
 
 ### 예전 코드들 (키즈 에이전시 포함) ###
 
