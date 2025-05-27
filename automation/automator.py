@@ -1,5 +1,6 @@
 import os
 import threading
+from datetime import datetime
 
 from flask.cli import load_dotenv
 
@@ -20,6 +21,9 @@ def start_task():
 
     def safe_task():
         try:
+            # if 19 <= datetime.now().hour <= 20:
+            #     pass
+            # else:
             set_task()
         except Exception as e:
             print(f"[SAFE_TASK ERROR] {e}")
@@ -30,8 +34,9 @@ def start_task():
     scheduler = BackgroundScheduler()
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
-        'interval',
-        minutes=int(os.getenv("INTERVAL"))
+        'cron',
+        hour='1-23',
+        minute='*/' + os.getenv("INTERVAL")
     )
 
     scheduler.start()
