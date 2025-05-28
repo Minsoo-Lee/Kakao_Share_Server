@@ -28,15 +28,15 @@ def start_task():
         except Exception as e:
             print(f"[SAFE_TASK ERROR] {e}")
 
-    task_thread = threading.Thread(target=safe_task, daemon=False)
-    task_thread.start()
+    # task_thread = threading.Thread(target=safe_task, daemon=False)
+    # task_thread.start()
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'cron',
-        hour='1-23',
-        minute='*/' + os.getenv("INTERVAL")
+        hour='11-15,18-22',
+        minute='*/30'
     )
 
     scheduler.start()
