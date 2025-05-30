@@ -38,8 +38,8 @@ def start_task():
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'cron',
-        hour='0-23',
-        minute='*/1'
+        hour='9-21/2',
+        minute=0
     )
 
     scheduler.start()
