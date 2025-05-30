@@ -20,7 +20,7 @@ chat_rooms = []
 
 def start_task():
     global chat_rooms
-    chat_rooms = os.getenv("ROOM").split(',')
+    chat_rooms = os.getenv("ROOM").split(':')
 
     def safe_task():
         try:
@@ -31,8 +31,8 @@ def start_task():
         except Exception as e:
             print(f"[SAFE_TASK ERROR] {e}")
 
-    # task_thread = threading.Thread(target=safe_task, daemon=False)
-    # task_thread.start()
+    task_thread = threading.Thread(target=safe_task, daemon=False)
+    task_thread.start()
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(
