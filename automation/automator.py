@@ -39,7 +39,7 @@ def start_task():
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'cron',
         day_of_week='mon, wed-fri',
-        hour='9-21/2',
+        hour='15-21/2',
         minute=0
     )
 
