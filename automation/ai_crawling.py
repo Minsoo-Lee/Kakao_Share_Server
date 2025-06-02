@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup as bs
 from config.url import *
+import re
 
 import requests
 
@@ -14,7 +15,8 @@ def from_ai_times(index):
 
         for title in titles:
             a_tag = title.select_one("a")
-            news_maps[a_tag.get_text()] = NEWS_LINKS[index] + a_tag["href"]
+            text = re.sub(r"\[.*?]\s*", "", a_tag.get_text().strip())
+            news_maps[text] = NEWS_LINKS[index] + a_tag["href"]
 
     return news_maps
 
