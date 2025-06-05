@@ -31,19 +31,21 @@ def start_task():
         except Exception as e:
             print(f"[SAFE_TASK ERROR] {e}")
 
-    task_thread = threading.Thread(target=safe_task, daemon=False)
-    task_thread.start()
+    # task_thread = threading.Thread(target=safe_task, daemon=False)
+    # task_thread.start()
+
+
 
     scheduler = BackgroundScheduler()
+    scheduler.start()
     scheduler.add_job(
         lambda: threading.Thread(target=safe_task, daemon=False).start(),
         'cron',
-        day_of_week='mon, wed-fri',
-        hour='15-21/2',
-        minute=0
+        day_of_week='mon-fri',
+        hour='9-17/4',
+        minute=0,
+        misfire_grace_time=60
     )
-
-    scheduler.start()
 
     # @sched.scheduled_job('cron', hour='*/1', minuite='0', id='프로세스 id 넣을것')
 
