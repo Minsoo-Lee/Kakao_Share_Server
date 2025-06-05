@@ -31,8 +31,8 @@ def start_task():
         except Exception as e:
             print(f"[SAFE_TASK ERROR] {e}")
 
-    # task_thread = threading.Thread(target=safe_task, daemon=False)
-    # task_thread.start()
+    task_thread = threading.Thread(target=safe_task, daemon=False)
+    task_thread.start()
 
 
 
